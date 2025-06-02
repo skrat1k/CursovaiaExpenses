@@ -1,0 +1,87 @@
+
+services:
+  #notification-service:
+  #  image: notificationapp:latest
+  #  container_name: notification-app
+   # restart: unless-stopped
+    #ports:
+     # - "8084:8084"
+    #depends_on:
+    #- postgres
+    #- keydb
+    #- rabbitmq
+  #app:
+   # image: testapp:latest
+    #container_name: taskservice-app
+    #restart: unless-stopped
+    #ports:
+    #  - "8083:8083"
+    #depends_on:
+    #- postgres
+    #- keydb
+    #- rabbitmq
+    #volumes:
+    #  - ./TaskService/config:/./TaskService/config
+  keydb:
+    image: "eqalpha/keydb:x86_64_v5.3.3"
+    container_name: keydb
+    command: "keydb-server /etc/keydb/redis.conf --server-threads 2"
+    volumes:
+#      - "./redis.conf:/etc/keydb/redis.conf"
+      - "data:/data"
+    ports:
+      - "6379:6379"
+    restart: unless-stopped
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq-standalone-lab3
+    ports:
+      - "5672:5672"
+      - "15671:15672"
+      - "15692:15692" 
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+      RABBITMQ_SERVER_ADDITIONAL_ERL_ARGS: "-rabbitmq_prometheus true"
+    volumes:
+      - ./rabbitmq-data:/var/lib/rabbitmq
+      - ./rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf
+    command: >
+      bash -c "rabbitmq-plugins enable --offline rabbitmq_prometheus && rabbitmq-server"
+  prometheus:
+      image: prom/prometheus:v2.44.0
+      container_name: prometheus-archapp-lab4
+      ports:
+         - "9090:9090"   # Prometheus web UI
+      volumes:
+         - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml  # Конфигурационный файл
+         - ./monitoring/alert_rule.yml:/etc/prometheus/alert_rule.yml  # Файл с алертами
+  grafana:
+    image: grafana/grafana
+    ports:
+      - "3000:3000"
+    volumes:
+      - grafana-data:/var/lib/grafana
+  #alertmanager:
+   # image: prom/alertmanager
+    #volumes:
+     # - ./monitoring/alertmanager.yml:/etc/alertmanager/alertmanager.yml
+    #ports:
+     # - "9093:9093"
+  postgres:
+    image: postgres:15-alpine
+    container_name: postgres
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: admin
+      POSTGRES_DB: expensesdb
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+volumes:
+  data:
+    driver: local
+  grafana-data:
+  pgdata:

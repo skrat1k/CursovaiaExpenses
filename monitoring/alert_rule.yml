@@ -1,0 +1,30 @@
+groups:
+  - name: example_alerts
+    rules:
+      - alert: HighTaskCreateRate
+        expr: increase(task_created_total[1m]) > 10
+        for: 10s
+        labels:
+          severity: warning
+        annotations:
+          summary: "Too many tasks created"
+          description: "More than 10 tasks were created recently."
+
+      - alert: NoNewTasksRecently
+        expr: rate(task_created_total[30s]) == 0
+        for: 30s
+        labels:
+          severity: warning
+        annotations:
+          summary: "No new tasks"
+          description: "No new tasks were created in the last 30 seconds."
+
+
+      - alert: HighRabbitQueue
+        expr: rabbitmq_queue_messages_ready > 100
+        for: 2m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High RabbitMQ queue length"
+          description: "More than 100 messages are waiting in the queue."
