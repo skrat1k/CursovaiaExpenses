@@ -1,9 +1,9 @@
 package handler
 
 import (
-	"TaskService/internal/dto"
-	"TaskService/internal/metrics"
-	"TaskService/internal/service"
+	"ExpensesService/internal/dto"
+	"ExpensesService/internal/metrics"
+	"ExpensesService/internal/service"
 	"database/sql"
 	"encoding/json"
 	"errors"
@@ -21,17 +21,17 @@ const (
 	GetExpenseByTime = "/expenses"
 )
 
-type TaskHandler struct {
-	TaskService service.TaskService
+type ExpenseHandler struct {
+	TaskService service.ExpenseService
 }
 
-func (h *TaskHandler) Register(router *chi.Mux) {
+func (h *ExpenseHandler) Register(router *chi.Mux) {
 	router.Get(GetExpenseByID, h.GetExpenseByID)
 	router.Get(GetExpenseByTime, h.GetExpenseByTime)
 	router.Post(CreateExpense, h.CreateExpense)
 }
 
-func (h *TaskHandler) CreateExpense(w http.ResponseWriter, r *http.Request) {
+func (h *ExpenseHandler) CreateExpense(w http.ResponseWriter, r *http.Request) {
 	start := time.Now()
 	status := "201"
 	defer func() {
@@ -65,7 +65,7 @@ func (h *TaskHandler) CreateExpense(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func (h *TaskHandler) GetExpenseByID(w http.ResponseWriter, r *http.Request) {
+func (h *ExpenseHandler) GetExpenseByID(w http.ResponseWriter, r *http.Request) {
 	start := time.Now()
 	status := "200"
 	defer func() {
@@ -97,7 +97,7 @@ func (h *TaskHandler) GetExpenseByID(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(task)
 }
 
-func (h *TaskHandler) GetExpenseByTime(w http.ResponseWriter, r *http.Request) {
+func (h *ExpenseHandler) GetExpenseByTime(w http.ResponseWriter, r *http.Request) {
 	start := time.Now()
 	status := "200"
 	defer func() {

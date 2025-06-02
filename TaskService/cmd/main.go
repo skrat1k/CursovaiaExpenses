@@ -1,14 +1,14 @@
 package main
 
 import (
-	"TaskService/internal/broker"
-	"TaskService/internal/config"
-	"TaskService/internal/db"
-	"TaskService/internal/handler"
-	"TaskService/internal/metrics"
-	"TaskService/internal/repo"
-	"TaskService/internal/service"
-	logger "TaskService/pkg/Logger"
+	"ExpensesService/internal/broker"
+	"ExpensesService/internal/config"
+	"ExpensesService/internal/db"
+	"ExpensesService/internal/handler"
+	"ExpensesService/internal/metrics"
+	"ExpensesService/internal/repo"
+	"ExpensesService/internal/service"
+	logger "ExpensesService/pkg/Logger"
 	"context"
 	"log/slog"
 	"net/http"
@@ -59,10 +59,10 @@ func main() {
 	router := chi.NewRouter()
 	router.Handle("/metrics", promhttp.Handler())
 
-	taskRepo := repo.TaskRepo{DB: conn}
-	taskService := service.TaskService{TaskRepository: taskRepo, Redis: redis, Rabbit: rabbitPublisher}
-	taskHandler := handler.TaskHandler{TaskService: taskService}
-	taskHandler.Register(router)
+	expenseRepo := repo.ExpenseRepo{DB: conn}
+	expenseService := service.ExpenseService{TaskRepository: expenseRepo, Redis: redis, Rabbit: rabbitPublisher}
+	expenseHandler := handler.ExpenseHandler{TaskService: expenseService}
+	expenseHandler.Register(router)
 
 	log.Info("Server starting...")
 

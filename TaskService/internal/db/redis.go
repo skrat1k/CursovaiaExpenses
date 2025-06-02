@@ -1,7 +1,7 @@
 package db
 
 import (
-	"TaskService/internal/model"
+	"ExpensesService/internal/model"
 	"context"
 	"encoding/json"
 	"strconv"

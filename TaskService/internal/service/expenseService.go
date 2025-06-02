@@ -1,11 +1,11 @@
 package service
 
 import (
-	"TaskService/internal/broker"
-	"TaskService/internal/db"
-	"TaskService/internal/dto"
-	"TaskService/internal/model"
-	"TaskService/internal/repo"
+	"ExpensesService/internal/broker"
+	"ExpensesService/internal/db"
+	"ExpensesService/internal/dto"
+	"ExpensesService/internal/model"
+	"ExpensesService/internal/repo"
 
 	"log"
 	"strconv"
@@ -18,13 +18,13 @@ const (
 	routingKeyGottenMounth = "expense.GetMounth"
 )
 
-type TaskService struct {
-	TaskRepository repo.TaskRepo
+type ExpenseService struct {
+	TaskRepository repo.ExpenseRepo
 	Redis          *db.RedisCache
 	Rabbit         *broker.Publisher
 }
 
-func (s *TaskService) CreateExpense(dto dto.CreateDTO) (int, error) {
+func (s *ExpenseService) CreateExpense(dto dto.CreateDTO) (int, error) {
 	redisKey := "monthexpense"
 	expense := model.Expense{
 		Title:  dto.Title,
@@ -40,7 +40,7 @@ func (s *TaskService) CreateExpense(dto dto.CreateDTO) (int, error) {
 	return expenseCreated.ID, err
 }
 
-func (s *TaskService) GetExpenseByID(id int) (*model.Expense, error) {
+func (s *ExpenseService) GetExpenseByID(id int) (*model.Expense, error) {
 	idStr := strconv.Itoa(id)
 	cachedExpense, err := s.Redis.GetExpense(idStr)
 	if err == nil {
@@ -59,7 +59,7 @@ func (s *TaskService) GetExpenseByID(id int) (*model.Expense, error) {
 	return expense, err
 }
 
-func (s *TaskService) GetExpenseByTime() (int, error) {
+func (s *ExpenseService) GetExpenseByTime() (int, error) {
 	redisKey := "monthexpense"
 	cachedData, err := s.Redis.GetMonthExpense(redisKey)
 	if err == nil {
@@ -79,7 +79,7 @@ func (s *TaskService) GetExpenseByTime() (int, error) {
 	return monthExpense, nil
 }
 
-func (s *TaskService) publishToRabbit(expense *model.Expense, monthExpense int, routingKey string) {
+func (s *ExpenseService) publishToRabbit(expense *model.Expense, monthExpense int, routingKey string) {
 	if err := s.Rabbit.PublishTask(expense, monthExpense, routingKey); err != nil {
 		log.Println("Cannot publish to rabbitmq exchanger")
 	}

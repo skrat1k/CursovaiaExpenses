@@ -1,17 +1,17 @@
 package repo
 
 import (
-	"TaskService/internal/model"
+	"ExpensesService/internal/model"
 	"context"
 
 	"github.com/jackc/pgx/v5"
 )
 
-type TaskRepo struct {
+type ExpenseRepo struct {
 	DB *pgx.Conn
 }
 
-func (r *TaskRepo) CreateExpense(expense model.Expense) (model.Expense, error) {
+func (r *ExpenseRepo) CreateExpense(expense model.Expense) (model.Expense, error) {
 	query := "INSERT INTO expenses (title, amount) VALUES($1, $2) returning id"
 	err := r.DB.QueryRow(context.Background(), query, expense.Title, expense.Amount).Scan(&expense.ID)
 	if err != nil {
@@ -20,7 +20,7 @@ func (r *TaskRepo) CreateExpense(expense model.Expense) (model.Expense, error) {
 	return expense, nil
 }
 
-func (r *TaskRepo) GetExpenseByID(id int) (*model.Expense, error) {
+func (r *ExpenseRepo) GetExpenseByID(id int) (*model.Expense, error) {
 	post := &model.Expense{ID: id}
 	query := "SELECT title, amount FROM expenses WHERE id = $1"
 	err := r.DB.QueryRow(context.Background(), query, id).Scan(&post.Title, &post.Amount)
@@ -30,7 +30,7 @@ func (r *TaskRepo) GetExpenseByID(id int) (*model.Expense, error) {
 	return post, nil
 }
 
-func (r *TaskRepo) GetExpenseByTime() (int, error) {
+func (r *ExpenseRepo) GetExpenseByTime() (int, error) {
 	var totalSpent int
 	query := "SELECT COALESCE(SUM(amount), 0) AS total_spent FROM expenses WHERE created_at >= date_trunc('month', CURRENT_DATE)"
 	err := r.DB.QueryRow(context.Background(), query).Scan(&totalSpent)

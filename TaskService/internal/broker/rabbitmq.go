@@ -1,7 +1,7 @@
 package broker
 
 import (
-	"TaskService/internal/model"
+	"ExpensesService/internal/model"
 	"encoding/json"
 	"log"
 	"strconv"
