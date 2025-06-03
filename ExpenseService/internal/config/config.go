@@ -33,7 +33,7 @@ func MustLoad() (*Config, error) {
 		return nil, fmt.Errorf("failed to get work directory: %w", err)
 	}
 
-	configPath, err := filepath.Abs(filepath.Join(workdir, "..", "..", "TaskService", "config", "local.yaml"))
+	configPath, err := filepath.Abs(filepath.Join(workdir, "..", "..", "ExpensesService", "config", "local.yaml"))
 	if err != nil {
 		return nil, fmt.Errorf("failed to resolve absolute path: %w", err)
 	}

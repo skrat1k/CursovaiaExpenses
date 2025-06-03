@@ -1,23 +1,23 @@
 groups:
   - name: example_alerts
     rules:
-      - alert: HighTaskCreateRate
-        expr: increase(task_created_total[1m]) > 10
+      - alert: HighExpenseCreateRate
+        expr: increase(expense_created_total[1m]) > 10
         for: 10s
         labels:
           severity: warning
         annotations:
-          summary: "Too many tasks created"
-          description: "More than 10 tasks were created recently."
+          summary: "Слишком много трат"
+          description: "Побереги кошелёк."
 
-      - alert: NoNewTasksRecently
-        expr: rate(task_created_total[30s]) == 0
+      - alert: NoNewExpenseRecently
+        expr: rate(expense_created_total[30s]) == 0
         for: 30s
         labels:
           severity: warning
         annotations:
-          summary: "No new tasks"
-          description: "No new tasks were created in the last 30 seconds."
+          summary: "Нет новых трат"
+          description: "Ты уже 30 секунд не тратил деньги, ты живой?."
 
 
       - alert: HighRabbitQueue
@@ -26,5 +26,5 @@ groups:
         labels:
           severity: warning
         annotations:
-          summary: "High RabbitMQ queue length"
-          description: "More than 100 messages are waiting in the queue."
+          summary: "Слишком большая очередь в RabbitMQ"
+          description: "В очереди сообщений больше, чем бабок в больнице."

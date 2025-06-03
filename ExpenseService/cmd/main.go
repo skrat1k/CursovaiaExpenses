@@ -2,7 +2,6 @@ package main
 
 import (
 	"ExpensesService/internal/broker"
-	"ExpensesService/internal/config"
 	"ExpensesService/internal/db"
 	"ExpensesService/internal/handler"
 	"ExpensesService/internal/metrics"
@@ -19,22 +18,17 @@ import (
 )
 
 func main() {
-	cfg, err := config.MustLoad()
-	if err != nil {
-		panic(err)
-	}
-
 	log := logger.GetLogger("dev")
 
 	metrics.Register()
 
 	psqlConnectionUrl := db.MakeURL(db.ConnectionInfo{
-		Username: cfg.UsernameDB,
-		Password: cfg.PasswordDB,
-		Host:     cfg.HostDB,
-		Port:     cfg.PortDB,
-		DBName:   cfg.NameDB,
-		SSLMode:  cfg.SSLModeDB,
+		Username: "postgres",
+		Password: "admin",
+		Host:     "postgres",
+		Port:     "5432",
+		DBName:   "expensesdb",
+		SSLMode:  "disable",
 	})
 
 	conn, err := db.CreatePostgresConnection(psqlConnectionUrl)
@@ -46,11 +40,11 @@ func main() {
 
 	defer conn.Close(context.Background())
 
-	redis := db.NewRedisCache("localhost:6379")
+	redis := db.NewRedisCache("keydb:6379")
 
 	log.Info("Success connect to database")
 
-	rabbitPublisher, err := broker.NewPublisher("amqp://guest:guest@localhost:5672/")
+	rabbitPublisher, err := broker.NewPublisher("amqp://guest:guest@rabbitmq-standalone-lab3:5672/")
 	if err != nil {
 		log.Error("Failed connected to rabbitmq", slog.String("error", err.Error()))
 		os.Exit(1)
@@ -66,7 +60,7 @@ func main() {
 
 	log.Info("Server starting...")
 
-	serverPort := cfg.ServerPort
+	serverPort := ":8083"
 
 	err = http.ListenAndServe(serverPort, router)
 	if err != nil {

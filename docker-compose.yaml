@@ -1,27 +1,25 @@
 
 services:
-  #notification-service:
-  #  image: notificationapp:latest
-  #  container_name: notification-app
-   # restart: unless-stopped
-    #ports:
-     # - "8084:8084"
-    #depends_on:
-    #- postgres
-    #- keydb
-    #- rabbitmq
-  #app:
-   # image: testapp:latest
-    #container_name: taskservice-app
-    #restart: unless-stopped
-    #ports:
-    #  - "8083:8083"
-    #depends_on:
-    #- postgres
-    #- keydb
-    #- rabbitmq
-    #volumes:
-    #  - ./TaskService/config:/./TaskService/config
+  notificationservice:
+    image: notificationservice
+    container_name: notification-app
+    restart: unless-stopped
+    ports:
+      - "8084:8084"
+    depends_on:
+    - postgres
+    - keydb
+    - rabbitmq
+  expenseservice:
+    image: expenseservice
+    container_name: expenseservice-app
+    restart: unless-stopped
+    ports:
+      - "8083:8083"
+    depends_on:
+    - postgres
+    - keydb
+    - rabbitmq
   keydb:
     image: "eqalpha/keydb:x86_64_v5.3.3"
     container_name: keydb
@@ -62,12 +60,12 @@ services:
       - "3000:3000"
     volumes:
       - grafana-data:/var/lib/grafana
-  #alertmanager:
-   # image: prom/alertmanager
-    #volumes:
-     # - ./monitoring/alertmanager.yml:/etc/alertmanager/alertmanager.yml
-    #ports:
-     # - "9093:9093"
+  alertmanager:
+    image: prom/alertmanager
+    volumes:
+      - ./monitoring/alertmanager.yml:/etc/alertmanager/alertmanager.yml
+    ports:
+      - "9093:9093"
   postgres:
     image: postgres:15-alpine
     container_name: postgres
